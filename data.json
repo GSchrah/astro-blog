@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "date": "2026-08-07",
+    "time": "00:07",
+    "location": "Ober-Mörlen",
+    "equipment": "Sky-Watcher Evostar 72/420",
+    "sky_quality": "5",
+    "weather": "Klar",
+    "obj_name": "NGC 6946",
+    "obj_type": "Galaxie",
+    "obj_desc": "NGC 6946 oder auch Feuerwerksgalaxie ist eine Balken-Spiralgalaxie vom Hubble-Typ SAB(rs)cd im Sternbild Cepheus an der Grenze zum Sternbild Cygnus am Nordsternhimmel.",
+    "notes": "",
+    "photos": [
+      "images/NGC6946_260806.jpg"
+    ]
+  }
+]
