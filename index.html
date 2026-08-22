@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__BLOG_TITLE__ | Deep Sky Logbook</title>
+    <!-- Google Fonts & Markdown Parser -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --bg-card-hover: rgba(30, 41, 59, 0.8);
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.05) 0px, transparent 50%);
+            color: var(--text-light); 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        header { 
+            border-bottom: 1px solid var(--border); 
+            background: rgba(7, 10, 18, 0.8); 
+            backdrop-filter: blur(12px); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+        .nav-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 1.25rem 2rem; 
+        }
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: var(--text-light); 
+            letter-spacing: 1px; 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo span { color: var(--accent); }
+
+        nav { display: flex; gap: 0.5rem; }
+        nav button { 
+            background: transparent; 
+            border: 1px solid transparent; 
+            color: var(--text-muted); 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        nav button.active, nav button:hover { 
+            color: var(--accent); 
+            background: var(--accent-glow);
+            border-color: var(--border-hover);
+        }
+
+        /* Hauptbereich & Hero Header */
+        main { max-width: 1200px; margin: 2.5rem auto; padding: 0 2rem; }
+
+        .hero {
+            margin-bottom: 3rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--text-muted); font-size: 1rem; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Grids & Cards */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 2rem; 
+        }
+        
+        .card { 
+            background: var(--bg-card); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow);
+            background: var(--bg-card-hover);
+        }
+
+        .card-img-wrap {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+            background: #0f172a;
+        }
+        .card img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s ease;
+        }
+        .card:hover img { transform: scale(1.04); }
+
+        .card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .card-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-date {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+
+        .card-title { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem; 
+            font-weight: 700;
+            margin-bottom: 0.75rem; 
+            color: var(--text-light); 
+        }
+        .card-text { 
+            font-size: 0.92rem; 
+            color: var(--text-muted); 
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        /* Artikel Reader View */
+        .article-reader {
+            display: none;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent);
+        }
+
+        .article-post {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            backdrop-filter: blur(8px);
+        }
+        .article-post h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        .article-post h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin: 1.8rem 0 0.8rem 0;
+        }
+        .article-post p {
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+        .article-post ul, .article-post ol {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: #cbd5e1;
+        }
+        .article-post li { margin-bottom: 0.4rem; }
+        .article-post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            cursor: pointer;
+        }
+
+        /* Galerie Grid */
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 1.25rem; 
+        }
+        .gallery-item { 
+            position: relative; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 1px solid var(--border); 
+            cursor: pointer; 
+            aspect-ratio: 1; 
+            transition: all 0.3s ease;
+        }
+        .gallery-item:hover {
+            border-color: var(--accent);
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Lightbox Overlay */
+        .lightbox { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(4, 7, 13, 0.92); 
+            backdrop-filter: blur(10px);
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000; 
+            padding: 2rem; 
+        }
+        .lightbox img { 
+            max-width: 90vw; 
+            max-height: 85vh; 
+            border-radius: 12px; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <div class="logo"><span>✦</span> __BLOG_TITLE__ | ASTRO LOG</div>
+            <nav>
+                <button class="active" onclick="switchTab('blog', this)">Beobachtungen</button>
+                <button onclick="switchTab('articles', this)">Artikel</button>
+                <button onclick="switchTab('gallery', this)">Galerie</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1 id="tab-title">Beobachtungstagebuch</h1>
+            <p id="tab-desc">Dokumentierte Nächte, Aufnahmen und astronomische Notizen.</p>
+        </div>
+
+        <section id="blog" class="tab-content active">
+            <div id="blog-grid" class="grid">Lade Beobachtungen...</div>
+        </section>
+
+        <section id="articles" class="tab-content">
+            <div id="article-grid" class="grid">Lade Artikel...</div>
+            <div id="article-reader" class="article-reader"></div>
+        </section>
+
+        <section id="gallery" class="tab-content">
+            <div id="gallery-grid" class="gallery-grid">Lade Galerie...</div>
+        </section>
+    </main>
+
+    <div id="lightbox" class="lightbox" onclick="this.style.display='none'">
+        <img id="lightbox-img" src="" alt="Vollbild">
+    </div>
+
+    <script>
+        let siteData = [];
+
+        async function loadData() {
+            try {
+                // Cache-Buster durch dynamischen Zeitstempel
+                const res = await fetch('data.json?v=' + new Date().getTime());
+                siteData = await res.json();
+                renderBlog();
+                renderArticles();
+                renderGallery();
+            } catch (e) {
+                document.getElementById('blog-grid').innerHTML = '<p style="color:var(--text-muted)">Noch keine Daten veröffentlicht.</p>';
+            }
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+
+            const titleEl = document.getElementById('tab-title');
+            const descEl = document.getElementById('tab-desc');
+            
+            if (tabId === 'blog') {
+                titleEl.textContent = 'Beobachtungstagebuch';
+                descEl.textContent = 'Dokumentierte Nächte, Aufnahmen und astronomische Notizen.';
+            } else if (tabId === 'articles') {
+                titleEl.textContent = 'Artikel & Berichte';
+                descEl.textContent = 'Unboxing, Testberichte und Ausrüstungserfahrungen.';
+                renderArticles(); // Reset auf Grid-Ansicht bei Tab-Wechsel
+            } else if (tabId === 'gallery') {
+                titleEl.textContent = 'Astro-Fotogalerie';
+                descEl.textContent = 'Alle gesammelten Aufnahmen im Überblick.';
+            }
+        }
+
+        function renderBlog() {
+            const container = document.getElementById('blog-grid');
+            const obs = siteData.filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')));
+            if (obs.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted)">Keine Beobachtungen vorhanden.</p>';
+                return;
+            }
+            container.innerHTML = obs.map(e => createCardHTML(e)).join('');
+        }
+
+        function renderArticles() {
+            const grid = document.getElementById('article-grid');
+            const reader = document.getElementById('article-reader');
+            
+            reader.style.display = 'none';
+            grid.style.display = 'grid';
+
+            const articles = siteData
+                .map((e, idx) => ({ ...e, originalIndex: idx }))
+                .filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
+
+            if (articles.length === 0) {
+                grid.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
+                return;
+            }
+            grid.innerHTML = articles.map(e => createArticleTeaserHTML(e)).join('');
+        }
+
+        function createCardHTML(e) {
+            const hasImage = e.photos && e.photos.length > 0;
+            const skyBortle = e.sky_quality ? `Bortle ${e.sky_quality}` : null;
+            
+            return `
+                <article class="card" ${hasImage ? `onclick="openLightbox('${e.photos[0]}')"` : ''}>
+                    ${hasImage ? `
+                        <div class="card-img-wrap">
+                            <img src="${e.photos[0]}" alt="${e.obj_name}" loading="lazy">
+                        </div>
+                    ` : ''}
+                    <div class="card-body">
+                        <div class="card-badges">
+                            <span class="badge badge-date">${e.date || 'Unbekannt'}</span>
+                            ${e.obj_type ? `<span class="badge">${e.obj_type}</span>` : ''}
+                            ${skyBortle ? `<span class="badge" style="border-color:rgba(129,140,248,0.3); color:#818cf8;">${skyBortle}</span>` : ''}
+                        </div>
+                        <h2 class="card-title">${e.obj_name}</h2>
+                        <div class="card-text">${e.notes || e.obj_desc || ''}</div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function createArticleTeaserHTML(e) {
+            let rawText = e.notes || e.obj_desc || '';
+            // Markdown-Zeichen für die kurze Vorschau entfernen
+            let cleanText = rawText.replace(/[#*_\-\[\]\(\)<>!]/g, '').trim();
+            if (cleanText.length > 150) cleanText = cleanText.substring(0, 150) + '...';
+
+            let previewImg = (e.photos && e.photos.length > 0) ? e.photos[0] : null;
+
+            return `
+                <article class="card" onclick="openArticle(${e.originalIndex})">
+                    ${previewImg ? `
+                        <div class="card-img-wrap">
+                            <img src="${previewImg}" alt="${e.obj_name}" loading="lazy">
+                        </div>
+                    ` : ''}
+                    <div class="card-body">
+                        <div class="card-badges">
+                            <span class="badge badge-date">${e.date || 'Unbekannt'}</span>
+                            <span class="badge">Artikel</span>
+                        </div>
+                        <h2 class="card-title">${e.obj_name}</h2>
+                        <p class="card-text">${cleanText || 'Klicke zum Lesen des Artikels...'}</p>
+                        <div style="margin-top:1.2rem; color:var(--accent); font-weight:600; font-size:0.85rem;">Artikel lesen →</div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function openArticle(idx) {
+            const e = siteData[idx];
+            const grid = document.getElementById('article-grid');
+            const reader = document.getElementById('article-reader');
+
+            grid.style.display = 'none';
+            reader.style.display = 'block';
+
+            const rawContent = e.notes || e.obj_desc || '';
+            const htmlContent = typeof marked !== 'undefined' ? marked.parse(rawContent) : rawContent;
+
+            reader.innerHTML = `
+                <button class="back-btn" onclick="renderArticles()">← Zurück zur Artikelübersicht</button>
+                <article class="article-post">
+                    <div class="card-badges">
+                        <span class="badge badge-date">${e.date || 'Unbekannt'}</span>
+                        <span class="badge">Artikel</span>
+                    </div>
+                    <h1>${e.obj_name}</h1>
+                    <div style="margin-top: 1.5rem;">
+                        ${htmlContent}
+                    </div>
+                </article>
+            `;
+
+            reader.querySelectorAll('img').forEach(img => {
+                img.addEventListener('click', () => openLightbox(img.src));
+            });
+
+            window.scrollTo({ top: 180, behavior: 'smooth' });
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-grid');
+            let images = [];
+            
+            siteData.forEach(e => { 
+                if(e.photos) images.push(...e.photos); 
+            });
+
+            if (images.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted)">Keine Bilder in der Galerie.</p>';
+                return;
+            }
+            
+            const uniqueImages = [...new Set(images)];
+
+            container.innerHTML = uniqueImages.map(src => `
+                <div class="gallery-item" onclick="openLightbox('${src}')">
+                    <img src="${src}" alt="Astrofoto" loading="lazy">
+                </div>
+            `).join('');
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
